@@ -1,13 +1,14 @@
 ssh_authorized_keys:
 - github:naumx
-hostname: m01
+hostname: dev
 k3os:
   modules:
     - wireguard
 k3os:
   k3s_args:
+  - --node-name=dev
   - server
-  - "--no-deploy=traefik"
+  - --no-deploy=traefik
 write_files:
 - content: |-
     apiVersion: helm.cattle.io/v1
