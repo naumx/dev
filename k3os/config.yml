@@ -1,0 +1,34 @@
+ssh_authorized_keys:
+- github:naumx
+hostname: m01
+k3os:
+  modules:
+    - wireguard
+k3os:
+  k3s_args:
+  - server
+  - "--no-deploy=traefik"
+write_files:
+- content: |-
+    apiVersion: helm.cattle.io/v1
+    kind: HelmChart
+    metadata:
+      name: traefik
+      namespace: kube-system
+    spec:
+      chart: https://%{KUBERNETES_API}%/static/charts/traefik-1.81.0.tgz
+      set:
+        rbac.enabled: "true"
+        ssl.enabled: "true"
+        ssl.enforced: "true"
+        acme.enabled: "true"
+        acme.challengeType: "tls-alpn-01"
+        acme.email: "mail@naumx.dev"
+        acme.staging: "true"
+        metrics.prometheus.enabled: "true"
+        kubernetes.ingressEndpoint.useDefaultPublishedService: "true"
+        image: "rancher/library-traefik"
+        dashboard.enabled: "true"
+  owner: root
+  path: /var/lib/rancher/k3s/server/manifests/traefik.yaml
+  permissions: '0755'
